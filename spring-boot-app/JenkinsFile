@@ -6,15 +6,9 @@ pipeline {
     }
   }
   stages {
-    stage('Checkout') {
-      steps {
-        sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/RHShamil/ci-cd-project.git'
-      }
-    }
     stage('Build and Test') {
       steps {
-        sh 'ls -ltr'
+        sh 'ls -ltr spring-boot-app'
         sh 'cd spring-boot-app && mvn clean package'
       }
     }
@@ -30,7 +24,14 @@ pipeline {
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-          sh 'cd spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+          sh '''
+            echo "Current directory: $(pwd)"
+            ls -la spring-boot-app
+            java -version
+            mvn --version
+            cd spring-boot-app
+            mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -X
+          '''
         }
       }
     }
@@ -60,8 +61,8 @@ pipeline {
             git config user.email "your_email@example.com"
             git config user.name "RHShamil"
             BUILD_NUMBER=${BUILD_NUMBER}
-            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" ci-cd-project/spring-boot-app-manifests/deployment.yml
-            git add ci-cd-project/spring-boot-app-manifests/deployment.yml
+            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+            git add spring-boot-app-manifests/deployment.yml
             git commit -m "Update deployment image to version ${BUILD_NUMBER}"
             git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
           '''
