@@ -20,12 +20,18 @@ pipeline {
       }
     }
     stage('Static Code Analysis') {
+      agent {
+        docker {
+            image 'maven:3.8.6-openjdk-17' // Use Maven with Java 17
+            args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+        }
+      }
       environment {
         SONAR_URL = "http://4.194.91.3:9000"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-          sh 'cd spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+          sh 'cd ci-cd-project/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
         }
       }
     }
