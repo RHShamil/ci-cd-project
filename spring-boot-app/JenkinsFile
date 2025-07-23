@@ -12,29 +12,6 @@ pipeline {
         sh 'cd spring-boot-app && mvn clean package'
       }
     }
-    stage('Static Code Analysis') {
-      agent {
-        docker {
-          image 'maven:3.8.6-openjdk-17'
-          args '--user 114:123 -v /var/run/docker.sock:/var/run/docker.sock'
-        }
-      }
-      environment {
-        SONAR_URL = "http://4.194.91.3:9000"
-      }
-      steps {
-        withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-          sh '''
-            echo "Current directory: $(pwd)"
-            ls -la spring-boot-app
-            java -version
-            mvn --version
-            cd spring-boot-app
-            mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -X
-          '''
-        }
-      }
-    }
     stage('Build and Push Docker Image') {
       environment {
         DOCKER_IMAGE = "rhshamil/ci-cd-project:${BUILD_NUMBER}"
