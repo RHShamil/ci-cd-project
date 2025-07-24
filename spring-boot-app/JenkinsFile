@@ -12,10 +12,10 @@ pipeline {
       }
     }
     stage('Checkout') {
-      steps {
-        sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/RHShamil/ci-cd-project.git'
-      }
+        steps {
+            git branch: 'main', credentialsId: 'github', url: 'https://github.com/RHShamil/ci-cd-project.git'
+            sh 'echo passed'
+        }
     }
     stage('Build and Test') {
       steps {
