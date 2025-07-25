@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'rezuanul/maven-docker-jdk:3.8.3-jdk-17'
-      args '--user 114:123 -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/jenkins/workspace:/var/lib/jenkins/workspace'
+      args '--user 114:123 -v /var/run/docker.sock:/var/run/docker.sock --group-add 124 -v /var/lib/jenkins/workspace:/var/lib/jenkins/workspace'
     }
   }
   stages {
@@ -10,7 +10,7 @@ pipeline {
       steps {
         script {
           def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
           )
           try {
             container.inside {
@@ -28,7 +28,7 @@ pipeline {
           git branch: 'main', url: 'https://github.com/RHShamil/ci-cd-project.git'
           script {
             def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
             )
             try {
               container.inside {
@@ -41,11 +41,11 @@ pipeline {
         }
       }
     }
-    stage('Build and Test') {
+    stage('Build@Test') {
       steps {
         script {
           def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
           )
           try {
             container.inside {
@@ -66,7 +66,7 @@ pipeline {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           script {
             def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
             )
             try {
               container.inside {
@@ -79,7 +79,7 @@ pipeline {
         }
       }
     }
-    stage('Build and Push Docker Image') {
+    stage('Build@Push Docker Image') {
       environment {
         DOCKER_IMAGE = "rezuanul/demojavaapp:${BUILD_NUMBER}"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
@@ -87,7 +87,7 @@ pipeline {
       steps {
         script {
           def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+            '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
           )
           try {
             container.inside {
@@ -112,7 +112,7 @@ pipeline {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
           script {
             def container = docker.image('rezuanul/maven-docker-jdk:3.8.3-jdk-17').run(
-              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock'
+              '--user 114:123 -v /var/lib/jenkins/workspace/my-project:/var/lib/jenkins/workspace/my-project -v /var/run/docker.sock:/var/run/docker.sock --group-add 124'
             )
             try {
               container.inside {
