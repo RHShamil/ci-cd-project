@@ -13,8 +13,10 @@ pipeline {
     }
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://github.com/RHShamil/ci-cd-project.git'
-        sh 'echo passed'
+        ws(workspace){
+          git branch: 'main', url: 'https://github.com/RHShamil/ci-cd-project.git'
+          sh 'echo passed'
+        }
       }
     }
     stage('Build and Test') {
